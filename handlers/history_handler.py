@@ -1,9 +1,14 @@
 import os
 
 
-def search_for_ksk(query: str) -> list:
+
+def search_for_ksk(query: str = "") -> list:
     """Return a ksk list that match the search query"""
-    pass
+    ksk_names = []
+    for ksk_name in os.listdir('history'):
+        if  ksk_name.upper().startswith(query.upper()):
+            ksk_names.append(f'{ksk_name}')
+    return ksk_names
 
 
 
@@ -15,4 +20,3 @@ def get_ksk_from_history(ksk_name) -> list:
         for img_name in os.listdir(ksk_path): 
                 images.append(f'{ksk_path}/{img_name}')
     return images
-
