@@ -20,3 +20,4 @@ def get_ksk_from_history(ksk_name) -> list:
         for img_name in os.listdir(ksk_path): 
                 images.append(f'{ksk_path}/{img_name}')
     return images
+
