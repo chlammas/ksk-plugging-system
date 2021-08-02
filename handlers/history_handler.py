@@ -9,4 +9,10 @@ def search_for_ksk(query: str) -> list:
 
 def get_ksk_from_history(ksk_name) -> list:
     """return a list of images that belong to a ksk"""
-    pass
+    images = []
+    ksk_path = f'history/{ksk_name}'
+    if os.path.exists(ksk_path):
+        for img_name in os.listdir(ksk_path): 
+                images.append(f'{ksk_path}/{img_name}')
+    return images
+
