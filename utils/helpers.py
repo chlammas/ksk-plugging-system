@@ -100,5 +100,11 @@ def remove_directory(dir_name):
         shutil.rmtree(dir_path)
 
 def copy_directory_content(dir_name, destination):
+    
     # copy the dir_name content to the destiation folder
-    pass
+    destination_path = os.path.join(BASE_DIR, destination)
+    dir_name_path = os.path.join(BASE_DIR, dir_name)
+    if os.path.exists(destination_path):
+        remove_directory(destination_path)
+    shutil.copytree(dir_name_path,destination_path)
+    
