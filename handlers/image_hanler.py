@@ -1,5 +1,5 @@
 from PIL import Image
-from utils.helpers import remove_directory_content, connectors_list, BASE_DIR,copy_directory_content
+from utils.helpers import remove_directory_content, copy_directory, connectors_list, BASE_DIR
 import os 
 import shutil
 
@@ -30,7 +30,7 @@ def generate_ksk_images(ksk_name: str, ksk_data: list):
         connector_image.save(f'{directory}/new{connector}.png', quality=95)
     if not os.path.exists("history"):
         os.mkdir("history")
-    copy_directory_content(directory,f"history/{ksk_name}")
+    copy_directory(directory,f"history/{ksk_name}")
     
         
 

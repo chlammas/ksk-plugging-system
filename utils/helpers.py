@@ -80,8 +80,9 @@ connectors_list = {
 }
 
 
-# remove old content
 def remove_directory_content(dir_name):
+    """Remove the whole directory content and keep it empty"""
+    
     #dir_name = 'result'
     dir_path = os.path.join(BASE_DIR, dir_name)
     if os.path.exists(dir_path):
@@ -99,12 +100,12 @@ def remove_directory(dir_name):
     if os.path.exists(dir_path):
         shutil.rmtree(dir_path)
 
-def copy_directory_content(dir_name, destination):
-    
-    # copy the dir_name content to the destiation folder
+
+def copy_directory(dir_name, destination):
+    """Copy the dir_name directory into the destiation directory"""
+
     destination_path = os.path.join(BASE_DIR, destination)
     dir_name_path = os.path.join(BASE_DIR, dir_name)
     if os.path.exists(destination_path):
         remove_directory(destination_path)
-    shutil.copytree(dir_name_path,destination_path)
-    
+    shutil.copytree(dir_name_path, destination_path)

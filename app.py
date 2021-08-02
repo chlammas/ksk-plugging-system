@@ -34,7 +34,7 @@ class Window(QWidget):
             "background-color :#2c3532;border :1px solid #d2e9e3")
 
         self.grid.addWidget(gb1, 0, 0, 2, 5)
-        gb2 = self.createExampleGroup("Plugs")
+        gb2 = self.createSecondGroup("HISTORY")
         self.grid.addWidget(gb2, 3, 4, 9, 1)
         self.setLayout(self.grid)
         # button2 = QPushButton(gb")
@@ -62,11 +62,10 @@ class Window(QWidget):
         vbox = QGridLayout()
         position = [(0, 0), (0, 1), (1, 0), (1, 1)]
         images = []
-        if name == "Plugs":
-            images.append("input/images/bc.png")
-        else:
-            for img_name in os.listdir('output'):
-                images.append('output/' + img_name)
+        for ksk_name in os.listdir('output'):
+            ksk_path = f'output/{ksk_name}'
+            for img_name in os.listdir(ksk_path):
+                images.append(f'{ksk_path}/{img_name}')
 
         for index in range(len(images)):
             row, column = position[index-1]
