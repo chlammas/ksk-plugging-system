@@ -51,7 +51,7 @@ class Window(QWidget):
     def generate_data(self):
         ksk_path = self.textbox.text()
         ksk_data = load_ksk(ksk_path,
-                            "input/data/wire_list.xlsx", 7)
+                            "input/data/wire_list.xlsx", 1)
         generate_ksk_images(*ksk_data)
         gb3 = self.createExampleGroup("connectors")
         self.grid.addWidget(gb3, 3, 0, 9, 4)
