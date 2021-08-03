@@ -1,5 +1,6 @@
-from handlers.excel_handler import load_ksk
-from handlers.image_hanler import generate_ksk_images
+from handlers.excel_handler import load_ksk_list
+from handlers.ouput_handler import get_ksk,search_for_ksk,load_ksk_object,dump_ksk_object
+
 import os
 
 
@@ -37,9 +38,22 @@ class Window(QWidget):
         gb2 = self.createSecondGroup("HISTORY")
         self.grid.addWidget(gb2, 3, 4, 9, 1)
         self.setLayout(self.grid)
-        # button2 = QPushButton(gb")
-        # button2.move(670, 45)
+        self.searchbox = QLineEdit(gb2)
+        self.searchbox.setStyleSheet(
+            "background-color :#2c3532;border :1px solid #d2e9e3")
+        self.searchbox.setGeometry(10,30,240,30)
+
+        
         self.setWindowTitle("PyQt5 Group Box")
+    
+        self.listWidget = QListWidget(gb2)
+        self.listWidget.setGeometry(10,120,240,200)
+        ksk_names=search_for_ksk()
+        for ksk_name in ksk_names:
+            QListWidgetItem(ksk_name,self.listWidget)
+        
+        self.searchbox.textChanged.connect(lambda e:self.search(self.searchbox.text()))
+        self.listWidget.itemClicked.connect(self.show_ksk_images)
         self.showMaximized()
 
     def browsefiles(self):
@@ -50,12 +64,24 @@ class Window(QWidget):
 
     def generate_data(self):
         ksk_path = self.textbox.text()
-        ksk_data = load_ksk(ksk_path,
-                            "input/data/wire_list.xlsx", 1)
-        generate_ksk_images(*ksk_data)
+        ksk_data = load_ksk_list(ksk_path,
+                            "input/data/wire_list.xlsx")
+        
+    
+    
+    def show_ksk_images(self):
+        print(self.listWidget.selectedItems()[0].text())
+        get_ksk(self.listWidget.selectedItems()[0].text())
         gb3 = self.createExampleGroup("connectors")
         self.grid.addWidget(gb3, 3, 0, 9, 4)
 
+    def search(self, query=""):
+        # self.searchbox.textChanged().connect(search_for_ksk(self.searchbox.text()))
+        self.listWidget.clear()
+        ksk_names=search_for_ksk(query)
+        for ksk_name in ksk_names:
+            QListWidgetItem(ksk_name,self.listWidget)
+        
     def createExampleGroup(self, name=""):
         groupBox = QGroupBox(name)
         # groupBox.setGeometry(QRect(*size))
