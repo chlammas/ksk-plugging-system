@@ -28,26 +28,29 @@ def generate_ksk_images(ksk_name: str, ksk_data: list):
 def search_for_ksk(query: str = "") -> list:
     """Return a ksk list that match the search query"""
     ksk_names = []
-    for ksk_name in os.listdir('output'):
+    ksk_list=load_ksk_object()
+    for ksk_name in ksk_list.keys():
         if ksk_name.upper().startswith(query.upper()):
             ksk_names.append(f'{ksk_name}')
     return ksk_names
 
 
-def get_ksk_from_history(ksk_name) -> list:
+def get_ksk(ksk_name):
     """return a list of images that belong to a ksk"""
-    images = []
-    ksk_path = f'output/{ksk_name}'
-    if os.path.exists(ksk_path):
-        for img_name in os.listdir(ksk_path):
-            images.append(f'{ksk_path}/{img_name}')
-    return images
+    ksk_list=load_ksk_object()
+    if ksk_name in ksk_list:
+        generate_ksk_images(ksk_name,ksk_list[ksk_name])
+
+
+    
+
 
 
 def create_ksk_directory(parent_dir: str, ksk_name: str):
     if not os.path.exists(parent_dir):
         os.mkdir(parent_dir)
-
+    else:
+        remove_directory_content(parent_dir)
     ksk_path = os.path.join(BASE_DIR, f'{parent_dir}/{ksk_name}')
     if os.path.exists(ksk_path):
         remove_directory_content(ksk_path)
@@ -55,11 +58,13 @@ def create_ksk_directory(parent_dir: str, ksk_name: str):
 
 
 def dump_ksk_object(ksk_list: dict):
-    with open('output/ksk.back', 'wb') as ksk_file:
+    with open('history/ksk.back', 'wb') as ksk_file:
         pickle.dump(ksk_list, ksk_file)
 
 
-def load_ksk_object():
-    with open('output/ksk.back', 'rb') as ksk_file:
+def load_ksk_object()-> dict:
+    if not os.path.exists('history/ksk.back'):
+        return {}
+    with open('history/ksk.back', 'rb') as ksk_file:
         ksk_list = pickle.load(ksk_file)
     return ksk_list
