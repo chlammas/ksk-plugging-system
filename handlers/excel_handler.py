@@ -1,17 +1,19 @@
 import pickle
 from openpyxl import load_workbook
 from utils.helpers import remove_directory_content
+from handlers.ouput_handler import dump_ksk_object
 
 
 def load_ksk_list(ksk_file_path: str, wirelist_file_path: str):
     ksk_wb = load_workbook(ksk_file_path)
     ksk_sheet = ksk_wb.active
-    derivatives = []
-    data = []
-    data = []
+    
+    
     all_ksk = {}
     max_column = ksk_sheet.max_column - 1
     while(max_column > 0):
+        data = []
+        derivatives = []
         ksk_name = ksk_sheet[1][max_column].value
         for row in ksk_sheet:
             if (row[0].value):
@@ -26,7 +28,10 @@ def load_ksk_list(ksk_file_path: str, wirelist_file_path: str):
         all_ksk[ksk_name] = data
         max_column -= 1
     remove_directory_content('output')
-    return all_ksk
+    dump_ksk_object(all_ksk)
+
+    
+    
 
 
 def load_wire_list(file_path: str):
