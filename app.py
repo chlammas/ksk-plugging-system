@@ -1,122 +1,114 @@
-from handlers.excel_handler import load_ksk_list
-from handlers.ouput_handler import get_ksk,search_for_ksk,load_ksk_object,dump_ksk_object
-
 import os
-
-
 import sys
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+from handlers.excel_handler import load_ksk_list
+from handlers.ouput_handler import get_ksk, search_for_ksk, dump_ksk_object
 
 
-class Window(QWidget):
+class MainWindow(QWidget):
     def __init__(self, parent=None):
-        super(Window, self).__init__(parent)
+        super(MainWindow, self).__init__(parent)
+
+        self.main_grid = QGridLayout()
+
+        file_selection_gb = self.createChildGroup("Files selection")
+
+        ksk_file_btn = QPushButton(file_selection_gb)
+        ksk_file_btn.setText("Browse")
+        ksk_file_btn.move(560, 45)
+        ksk_file_btn.clicked.connect(self.browsefile)
+        ksk_file_btn.setStyleSheet("background-color :#2c3532;")
+
+        generate_btn = QPushButton(file_selection_gb)
+        generate_btn.setText("Generate")
+        generate_btn.move(670, 45)
+        generate_btn.clicked.connect(self.generate_data)
+        generate_btn.setStyleSheet("background-color :#2c3532;")
+
+        self.ksk_path_box = QLineEdit(file_selection_gb)
+        self.ksk_path_box.setGeometry(200, 45, 350, 30)
+        self.ksk_path_box.setStyleSheet(
+            "background-color :#2c3532;border :1px solid #d2e9e3")
+
+        self.main_grid.addWidget(file_selection_gb, 0, 0, 2, 5)
+
+        output_gb = self.createChildGroup("Output")
+        self.main_grid.addWidget(output_gb, 3, 4, 9, 1)
+
+        self.search_box = QLineEdit(output_gb)
+        self.search_box.setStyleSheet(
+            "background-color :#2c3532;border :1px solid #d2e9e3")
+        self.search_box.setGeometry(10, 30, 240, 30)
+
+        self.list_widget = QListWidget(output_gb)
+        self.list_widget.setGeometry(10, 70, 240, 460)
+        self.fill_ksk_list_widget()
+
+        self.search_box.textChanged.connect(self.fill_ksk_list_widget)
+        self.list_widget.itemClicked.connect(self.show_ksk_images)
+
+        self.setWindowTitle("Plugging System")
         self.setStyleSheet(
             "background-color: #074143;color:#d2e9e3;font-size:18px")
-        self.grid = QGridLayout()
-        gb1 = self.createSecondGroup("traitement de donnees")
-
-        button1 = QPushButton(gb1)
-        button1.setText("Browse")
-        button1.move(560, 45)
-        button1.clicked.connect(self.browsefiles)
-        button1.setStyleSheet("background-color :#2c3532;")
-        # b0a295;
-        button2 = QPushButton(gb1)
-        button2.setText("Generate")
-        button2.move(670, 45)
-        button2.clicked.connect(self.generate_data)
-        button2.setStyleSheet("background-color :#2c3532;")
-        self.textbox = QLineEdit(gb1)
-        self.textbox.setGeometry(200, 45, 350, 30)
-        self.textbox.setStyleSheet(
-            "background-color :#2c3532;border :1px solid #d2e9e3")
-
-        self.grid.addWidget(gb1, 0, 0, 2, 5)
-        gb2 = self.createSecondGroup("HISTORY")
-        self.grid.addWidget(gb2, 3, 4, 9, 1)
-        self.setLayout(self.grid)
-        self.searchbox = QLineEdit(gb2)
-        self.searchbox.setStyleSheet(
-            "background-color :#2c3532;border :1px solid #d2e9e3")
-        self.searchbox.setGeometry(10,30,240,30)
-
-        
-        self.setWindowTitle("PyQt5 Group Box")
-    
-        self.listWidget = QListWidget(gb2)
-        self.listWidget.setGeometry(10,120,240,200)
-        ksk_names=search_for_ksk()
-        for ksk_name in ksk_names:
-            QListWidgetItem(ksk_name,self.listWidget)
-        
-        self.searchbox.textChanged.connect(lambda e:self.search(self.searchbox.text()))
-        self.listWidget.itemClicked.connect(self.show_ksk_images)
+        self.setLayout(self.main_grid)
         self.showMaximized()
 
-    def browsefiles(self):
+    def browsefile(self):
+        """ Get a file path and put it in a textbox """
         fname = QFileDialog.getOpenFileName(
             self, 'Open file', '', 'Excel (*.csv, *.xlsx)')
-        self.textbox.setText(fname[0])
-        return fname[0]
+        self.ksk_path_box.setText(fname[0])
 
     def generate_data(self):
-        ksk_path = self.textbox.text()
-        ksk_data = load_ksk_list(ksk_path,
-                            "input/data/wire_list.xlsx")
-        
-    
-    
-    def show_ksk_images(self):
-        print(self.listWidget.selectedItems()[0].text())
-        get_ksk(self.listWidget.selectedItems()[0].text())
-        gb3 = self.createExampleGroup("connectors")
-        self.grid.addWidget(gb3, 3, 0, 9, 4)
+        """load KSK's data from a file into an object then pickle it"""
+        ksk_path = self.ksk_path_box.text()
+        all_ksk = load_ksk_list(ksk_path,
+                                "input/data/wire_list.xlsx")
+        dump_ksk_object(all_ksk)
 
-    def search(self, query=""):
-        # self.searchbox.textChanged().connect(search_for_ksk(self.searchbox.text()))
-        self.listWidget.clear()
-        ksk_names=search_for_ksk(query)
+    def show_ksk_images(self):
+        """Show up image of each connector of a ksk"""
+        ksk_name = self.list_widget.selectedItems()[0].text()
+        get_ksk(ksk_name)
+        connectors_gb = self.createParentGroup("Connectors")
+        self.main_grid.addWidget(connectors_gb, 3, 0, 9, 4)
+
+    def fill_ksk_list_widget(self):
+        """Fill up the ksk list widget by ksk names"""
+        self.list_widget.clear()
+        search_query = self.search_box.text()
+        ksk_names = search_for_ksk(search_query)
         for ksk_name in ksk_names:
-            QListWidgetItem(ksk_name,self.listWidget)
-        
-    def createExampleGroup(self, name=""):
+            QListWidgetItem(ksk_name, self.list_widget)
+
+    def createParentGroup(self, name=""):
         groupBox = QGroupBox(name)
-        # groupBox.setGeometry(QRect(*size))
-        vbox = QGridLayout()
+        g_layout = QGridLayout()
         position = [(0, 0), (0, 1), (1, 0), (1, 1)]
         images = []
         for ksk_name in os.listdir('output'):
             ksk_path = f'output/{ksk_name}'
-            for img_name in os.listdir(ksk_path):
+            for index, img_name in enumerate(os.listdir(ksk_path)):
                 images.append(f'{ksk_path}/{img_name}')
-
-        for index in range(len(images)):
-            row, column = position[index-1]
-            vbox.addWidget(self.createSecondGroup(
+                row, column = position[index]
+                g_layout.addWidget(self.createChildGroup(
                 "", images[index-1]), row, column)
-            # vbox.addWidget(radio2)
-            # vbox.addWidget(radio3)
-            groupBox.setLayout(vbox)
+                groupBox.setLayout(g_layout)
 
         return groupBox
 
-    def createSecondGroup(self, name="", image=""):
+    def createChildGroup(self, name="", image=""):
         groupBox = QGroupBox(name)
         groupBox.setGeometry(QRect(660, 100, 120, 321))
         if image != "":
-            # creating label
             label = QLabel(groupBox)
-            # loading image
             pixmap1 = QPixmap(image)
-            # adding image to label
             label.setPixmap(pixmap1)
             label.setScaledContents(True)
             label.resize(540, 250)
 
-        #groupBox.setStyleSheet("background: url(" + image + ") no-repeat;")
         vbox = QVBoxLayout()
         vbox.addStretch(1)
         groupBox.setLayout(vbox)
@@ -126,6 +118,6 @@ class Window(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    clock = Window()
+    clock = MainWindow()
     clock.show()
     sys.exit(app.exec_())
