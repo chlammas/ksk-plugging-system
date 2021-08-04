@@ -5,9 +5,9 @@ from handlers.ouput_handler import dump_ksk_object
 
 
 def load_ksk_list(ksk_file_path: str, wirelist_file_path: str):
+    """Convert a KSK list excel sheet to an object based on a wire-list"""
     ksk_wb = load_workbook(ksk_file_path)
     ksk_sheet = ksk_wb.active
-    
     
     all_ksk = {}
     max_column = ksk_sheet.max_column - 1
@@ -28,13 +28,13 @@ def load_ksk_list(ksk_file_path: str, wirelist_file_path: str):
         all_ksk[ksk_name] = data
         max_column -= 1
     remove_directory_content('output')
-    dump_ksk_object(all_ksk)
-
+    return all_ksk
     
     
 
 
 def load_wire_list(file_path: str):
+    """Load a wire-list excel sheet and return the neccessary data as a list"""
     wirelist_wb = load_workbook(file_path)
     wirelist_sheet = wirelist_wb.active
     data = []  # data = [(derivative, connector, cavity), ...]
