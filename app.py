@@ -120,7 +120,6 @@ class MainWindow(QWidget):
 
     def generate_data(self):
         """load KSK's data from a file into an object then pickle it"""
-      
         Wcc_path=self.WCC_path_box.text()
         ksk_path = self.ksk_path_box.text()
         try:
@@ -128,7 +127,6 @@ class MainWindow(QWidget):
         except ValueError as err:
             QMessageBox.warning(self,"file ", str(err))
             return 
-        
         dump_ksk_object(all_ksk)
         self.wm = SecondWindow()
         self.wm.show()
