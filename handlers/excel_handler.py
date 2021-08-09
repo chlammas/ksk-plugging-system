@@ -13,6 +13,7 @@ def load_ksk_list(ksk_file_path: str, wirelist_file_path: str):
     ksk_wb = load_workbook(ksk_file_path)
     ksk_sheet = ksk_wb.active
     
+    
     all_ksk = {}
     max_column = ksk_sheet.max_column - 1
     while(max_column > 0):
