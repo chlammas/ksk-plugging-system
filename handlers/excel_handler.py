@@ -30,8 +30,13 @@ def load_ksk_list(ksk_file_path: str, wirelist_file_path: str):
         for derivative, connector, empty_cavity in wirelist_data:
             if derivative in derivatives:
                 data.append((connector, empty_cavity))
-        all_ksk[ksk_name] = data
+        if data:
+            all_ksk[ksk_name] = data
         max_column -= 1
+
+    if not all_ksk:
+        raise ValueError("Files fromat is invalid!")
+
     remove_directory_content('output')
     return all_ksk
     
@@ -46,15 +51,14 @@ def load_wire_list(file_path: str):
     wirelist_wb = load_workbook(file_path)
     wirelist_sheet = wirelist_wb.active
     data = []  # data = [(derivative, connector, cavity), ...]
-
+    
     for row in list(wirelist_sheet)[1:]:  # row by row
         # row[0] : Derivative
-        # row[1] : Wire
-        # row[8] : Connector
-        # row[9] : Cavity
+        # row[1] : Connector
+        # row[2] : Cavity
         derivative = row[0].value.split(' ')[0]
-        connector_id = row[8].value.strip()
-        empty_cavity = row[9].value
+        connector_id = row[1].value.strip()
+        empty_cavity = row[2].value
         data.append((derivative, connector_id, empty_cavity))
 
     return data
