@@ -1,3 +1,4 @@
+import os
 import pickle
 from openpyxl import load_workbook
 from utils.helpers import remove_directory_content
@@ -6,8 +7,12 @@ from handlers.ouput_handler import dump_ksk_object
 
 def load_ksk_list(ksk_file_path: str, wirelist_file_path: str):
     """Convert a KSK list excel sheet to an object based on a wire-list"""
+    if not os.path.exists(ksk_file_path):
+        raise ValueError("kSK path is invalid")
+    
     ksk_wb = load_workbook(ksk_file_path)
     ksk_sheet = ksk_wb.active
+    
     
     all_ksk = {}
     max_column = ksk_sheet.max_column - 1
@@ -35,6 +40,9 @@ def load_ksk_list(ksk_file_path: str, wirelist_file_path: str):
 
 def load_wire_list(file_path: str):
     """Load a wire-list excel sheet and return the neccessary data as a list"""
+    if not os.path.exists(file_path):
+        raise ValueError("Wire-list path is invalid")
+
     wirelist_wb = load_workbook(file_path)
     wirelist_sheet = wirelist_wb.active
     data = []  # data = [(derivative, connector, cavity), ...]
