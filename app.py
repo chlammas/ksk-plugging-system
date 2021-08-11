@@ -40,16 +40,14 @@ class MainWindow(QWidget):
 
         generate_btn = QPushButton(file_selection_gb)
         generate_btn.setText("Generate")
-        # generate_btn.move()(100, 210,300,120)
         generate_btn.setGeometry(140, 320, 200, 40)
         generate_btn.clicked.connect(self.generate_data)
         generate_btn.setStyleSheet("background-color :#1b3320;color:#fbeec1")
 
         figure_generate_btn = QPushButton(file_selection_gb)
         figure_generate_btn.setText("Connect as an operator")
-        # figure_generate_btn.move()(100, 210,300,120)
         figure_generate_btn.setGeometry(350, 400, 200, 60)
-        figure_generate_btn.clicked.connect(self.generate_data)
+        figure_generate_btn.clicked.connect(self.show_operator_window)
         figure_generate_btn.setStyleSheet(
             "background-color :#bd986b;color:black")
         self.WCC_path_box = QLineEdit(file_selection_gb)
@@ -74,6 +72,7 @@ class MainWindow(QWidget):
         label2.setGeometry(60, 240, 350, 30)
         label2.setText('Select ksk file :')
         label2.setStyleSheet("color:black;font-size:18px")
+
         self.ksk_path_box = QLineEdit(file_selection_gb)
         self.ksk_path_box.setGeometry(60, 270, 350, 30)
         self.ksk_path_box.setStyleSheet(
@@ -99,6 +98,7 @@ class MainWindow(QWidget):
         fname = QFileDialog.getOpenFileName(
             self, 'Open file', '', 'Excel (*.csv, *.xlsx)')
         self.WCC_path_box.setText(fname[0])
+
     def initUI(self):
         self.setWindowTitle('Centering')
         self.resize(600, 500)
@@ -112,6 +112,7 @@ class MainWindow(QWidget):
         self.move(qr.topLeft())
 
     def change_editline_state(self):
+
         self.WCC_path_box.setReadOnly(not self.WCC_path_box.isReadOnly())
         self.ksk_WCC_btn.setEnabled(not self.ksk_WCC_btn.isEnabled())
 
@@ -122,13 +123,20 @@ class MainWindow(QWidget):
         try:
             all_ksk = load_ksk_list(ksk_path, Wcc_path)
         except ValueError as err:
-            QMessageBox.warning(self, "Excel file ", str(err))
+            QMessageBox.critical(self, "Excel file ", str(err))
         except:
-            QMessageBox.warning(self, "Excel file ", 'Something wrong')
+            QMessageBox.critical(self, "Excel file ", 'Something wrong')
         else:
             dump_ksk_object(all_ksk)
-            self.wm = SecondWindow()
-            self.wm.show()
+            self.ksk_path_box.clear()
+            msg = QMessageBox()
+            msg.information(self, "Data Generated ",
+                            'Data Generated successfuly')
+
+    def show_operator_window(self):
+        self.wm = SecondWindow(True)
+        self.wm.show()
+        self.close()
 
     def createChildGroup(self, name="", image=""):
         groupBox = QGroupBox(name)
@@ -148,7 +156,6 @@ class MainWindow(QWidget):
 
 
 if __name__ == '__main__':
-    appctxt = ApplicationContext()
     app = QApplication(sys.argv)
     clock = MainWindow()
     clock.show()
