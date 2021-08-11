@@ -1,26 +1,23 @@
 import os
-import pickle
 from openpyxl import load_workbook
 from utils.helpers import remove_directory_content
-from handlers.ouput_handler import dump_ksk_object
 
-
-def load_ksk_list(ksk_file_path: str, wirelist_file_path: str):
+def load_KSK_list(KSK_file_path: str, wirelist_file_path: str):
     """Convert a KSK list excel sheet to an object based on a wire-list"""
-    if not os.path.exists(ksk_file_path):
-        raise ValueError("kSK path is invalid")
+    if not os.path.exists(KSK_file_path):
+        raise ValueError("KSK path is invalid")
     
-    ksk_wb = load_workbook(ksk_file_path)
-    ksk_sheet = ksk_wb.active
+    KSK_wb = load_workbook(KSK_file_path)
+    KSK_sheet = KSK_wb.active
     
     
-    all_ksk = {}
-    max_column = ksk_sheet.max_column - 1
+    all_KSK = {}
+    max_column = KSK_sheet.max_column - 1
     while(max_column > 0):
         data = []
         derivatives = []
-        ksk_name = ksk_sheet[1][max_column].value
-        for row in ksk_sheet:
+        KSK_name = KSK_sheet[1][max_column].value
+        for row in KSK_sheet:
             if (row[0].value):
                 if row[max_column].value == 'X':
                      # remove derivative version then add it to the list
@@ -31,14 +28,14 @@ def load_ksk_list(ksk_file_path: str, wirelist_file_path: str):
             if derivative in derivatives:
                 data.append((connector, empty_cavity))
         if data:
-            all_ksk[ksk_name] = data
+            all_KSK[KSK_name] = data
         max_column -= 1
 
-    if not all_ksk:
+    if not all_KSK:
         raise ValueError("Files fromat is invalid!")
 
     remove_directory_content('output')
-    return all_ksk
+    return all_KSK
     
     
 

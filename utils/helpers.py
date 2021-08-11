@@ -1,9 +1,5 @@
 import os
 import shutil
-from pathlib import Path
-
-# /plugging system/
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 connectors_list = {
     # connector_id" {"cavity": [dimention, plug]}
@@ -84,7 +80,7 @@ def remove_directory_content(dir_name):
     """Remove the whole directory content and keep it empty"""
     
     #dir_name = 'result'
-    dir_path = os.path.join(BASE_DIR, dir_name)
+    dir_path = dir_name
     if os.path.exists(dir_path):
         for child in os.listdir(dir_name):
             child_path = os.path.join(dir_path, child)
@@ -95,17 +91,13 @@ def remove_directory_content(dir_name):
 
 
 def remove_directory(dir_name):
-    dir_path = os.path.join(BASE_DIR, dir_name)
-
-    if os.path.exists(dir_path):
-        shutil.rmtree(dir_path)
+    if os.path.exists(dir_name):
+        shutil.rmtree(dir_name)
 
 
 def copy_directory(dir_name, destination):
     """Copy the dir_name directory into the destiation directory"""
 
-    destination_path = os.path.join(BASE_DIR, destination)
-    dir_name_path = os.path.join(BASE_DIR, dir_name)
-    if os.path.exists(destination_path):
-        remove_directory(destination_path)
-    shutil.copytree(dir_name_path, destination_path)
+    if os.path.exists(destination):
+        remove_directory(destination)
+    shutil.copytree(dir_name, destination)

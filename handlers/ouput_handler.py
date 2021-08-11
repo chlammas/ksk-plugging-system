@@ -1,18 +1,18 @@
 import os
 import pickle
 from PIL import Image
-from utils.helpers import connectors_list, BASE_DIR, remove_directory_content
+from utils.helpers import connectors_list, remove_directory, remove_directory_content
 
 
-def generate_ksk_images(ksk_name: str, ksk_data: list):
+def generate_KSK_images(KSK_name: str, KSK_data: list):
 
-    create_ksk_directory('output', ksk_name)
+    create_KSK_directory('output', KSK_name)
 
-    used_connectors = [connector for connector, _ in ksk_data]
-    directory = f'output/{ksk_name}'
+    used_connectors = [connector for connector, _ in KSK_data]
+    directory = f'output/{KSK_name}'
     for connector in used_connectors:
         empty_cavities = [cavity for conn,
-                          cavity in ksk_data if connector == conn]
+                          cavity in KSK_data if connector == conn]
         connector_image = Image.open(
             f'input/images/connectors/{connector}.png')
         for cavity in connectors_list[connector]:
@@ -25,46 +25,46 @@ def generate_ksk_images(ksk_name: str, ksk_data: list):
         connector_image.save(f'{directory}/new{connector}.png', quality=95)
 
 
-def search_for_ksk(query: str = "") -> list:
-    """Return a ksk list that match the search query"""
-    ksk_names = []
-    ksk_list = load_ksk_object()
-    for ksk_name in ksk_list.keys():
-        if ksk_name.upper().startswith(query.upper()):
-            ksk_names.append(f'{ksk_name}')
-    return ksk_names
+def search_for_KSK(query: str = "") -> list:
+    """Return a KSK list that match the search query"""
+    KSK_names = []
+    KSK_list = load_KSK_object()
+    for KSK_name in KSK_list.keys():
+        if KSK_name.upper().startswith(query.upper()):
+            KSK_names.append(f'{KSK_name}')
+    return KSK_names
 
 
-def get_ksk(ksk_name):
-    """return a list of images that belong to a ksk"""
-    ksk_list = load_ksk_object()
-    if ksk_name in ksk_list:
-        generate_ksk_images(ksk_name, ksk_list[ksk_name])
+def get_KSK(KSK_name):
+    """return a list of images that belong to a KSK"""
+    KSK_list = load_KSK_object()
+    if KSK_name in KSK_list:
+        generate_KSK_images(KSK_name, KSK_list[KSK_name])
 
 
-def create_ksk_directory(parent_dir: str, ksk_name: str):
+def create_KSK_directory(parent_dir: str, KSK_name: str):
     if not os.path.exists(parent_dir):
         os.mkdir(parent_dir)
     else:
         remove_directory_content(parent_dir)
-    ksk_path = os.path.join(BASE_DIR, f'{parent_dir}/{ksk_name}')
-    if os.path.exists(ksk_path):
-        remove_directory_content(ksk_path)
-    os.mkdir(ksk_path)
+    KSK_path = os.path.join(parent_dir, KSK_name)
+    if os.path.exists(KSK_path):
+        remove_directory(KSK_path)
+    os.mkdir(KSK_path)
 
 
 
-def dump_ksk_object(ksk_list: dict):
+def dump_KSK_object(KSK_list: dict):
     if not os.path.exists('data'):
         os.mkdir('data')
-    with open('data/ksk.back', 'wb') as ksk_file:
-        pickle.dump(ksk_list, ksk_file)
+    with open('data/KSK.back', 'wb') as KSK_file:
+        pickle.dump(KSK_list, KSK_file)
 
 
-def load_ksk_object() -> dict:
-    if not os.path.exists('data/ksk.back'):
+def load_KSK_object() -> dict:
+    if not os.path.exists('data/KSK.back'):
         return {}
-    with open('data/ksk.back', 'rb') as ksk_file:
-        ksk_list = pickle.load(ksk_file)
-    return ksk_list
+    with open('data/KSK.back', 'rb') as KSK_file:
+        KSK_list = pickle.load(KSK_file)
+    return KSK_list
 
