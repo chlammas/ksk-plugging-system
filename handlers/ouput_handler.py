@@ -53,6 +53,7 @@ def create_ksk_directory(parent_dir: str, ksk_name: str):
     os.mkdir(ksk_path)
 
 
+
 def dump_ksk_object(ksk_list: dict):
     if not os.path.exists('data'):
         os.mkdir('data')
@@ -66,3 +67,4 @@ def load_ksk_object() -> dict:
     with open('data/ksk.back', 'rb') as ksk_file:
         ksk_list = pickle.load(ksk_file)
     return ksk_list
+

@@ -74,7 +74,6 @@ class MainWindow(QWidget):
         label2.setGeometry(60, 240, 350, 30)
         label2.setText('Select ksk file :')
         label2.setStyleSheet("color:black;font-size:18px")
-
         self.ksk_path_box = QLineEdit(file_selection_gb)
         self.ksk_path_box.setGeometry(60, 270, 350, 30)
         self.ksk_path_box.setStyleSheet(
@@ -100,7 +99,6 @@ class MainWindow(QWidget):
         fname = QFileDialog.getOpenFileName(
             self, 'Open file', '', 'Excel (*.csv, *.xlsx)')
         self.WCC_path_box.setText(fname[0])
-
     def initUI(self):
         self.setWindowTitle('Centering')
         self.resize(600, 500)
@@ -114,7 +112,6 @@ class MainWindow(QWidget):
         self.move(qr.topLeft())
 
     def change_editline_state(self):
-
         self.WCC_path_box.setReadOnly(not self.WCC_path_box.isReadOnly())
         self.ksk_WCC_btn.setEnabled(not self.ksk_WCC_btn.isEnabled())
 
