@@ -22,10 +22,10 @@ class MainWindow(QWidget):
         self.ksk_WCC_btn.move(430, 160)
         self.ksk_WCC_btn.clicked.connect(self.browseWCC)
         self.ksk_WCC_btn.setStyleSheet("background-color :#fbeec1;color:black")
-        
-        label= QLabel(file_selection_gb)
-            # loading image
-        pixmap1 = QPixmap('input/images/im.png')   
+
+        label = QLabel(file_selection_gb)
+        # loading image
+        pixmap1 = QPixmap('input/images/im.png')
         # adding image to label
         label.setPixmap(pixmap1)
         # print(pixmap1.size())
@@ -41,16 +41,17 @@ class MainWindow(QWidget):
         generate_btn = QPushButton(file_selection_gb)
         generate_btn.setText("Generate")
         # generate_btn.move()(100, 210,300,120)
-        generate_btn.setGeometry(140, 320,200,40)
+        generate_btn.setGeometry(140, 320, 200, 40)
         generate_btn.clicked.connect(self.generate_data)
         generate_btn.setStyleSheet("background-color :#1b3320;color:#fbeec1")
 
         figure_generate_btn = QPushButton(file_selection_gb)
         figure_generate_btn.setText("Connect as an operator")
         # figure_generate_btn.move()(100, 210,300,120)
-        figure_generate_btn.setGeometry(350, 400,200,60)
+        figure_generate_btn.setGeometry(350, 400, 200, 60)
         figure_generate_btn.clicked.connect(self.generate_data)
-        figure_generate_btn.setStyleSheet("background-color :#bd986b;color:black")
+        figure_generate_btn.setStyleSheet(
+            "background-color :#bd986b;color:black")
         self.WCC_path_box = QLineEdit(file_selection_gb)
         self.WCC_path_box.setText("input/data/wire_list.xlsx")
         self.WCC_path_box.setReadOnly(True)
@@ -73,7 +74,6 @@ class MainWindow(QWidget):
         label2.setGeometry(60, 240, 350, 30)
         label2.setText('Select ksk file :')
         label2.setStyleSheet("color:black;font-size:18px")
-       
         self.ksk_path_box = QLineEdit(file_selection_gb)
         self.ksk_path_box.setGeometry(60, 270, 350, 30)
         self.ksk_path_box.setStyleSheet(
@@ -81,12 +81,10 @@ class MainWindow(QWidget):
 
         self.main_grid.addWidget(file_selection_gb, 0, 0, 2, 5)
 
-        
-
         self.setWindowTitle("Plugging System")
         self.setStyleSheet(
             "background-color: #659ebc;color:black;font-size:18px")
-            #074143
+        # 074143
         self.setLayout(self.main_grid)
         # self.showMaximized()
 
@@ -114,19 +112,23 @@ class MainWindow(QWidget):
         self.move(qr.topLeft())
 
     def change_editline_state(self):
-    
         self.WCC_path_box.setReadOnly(not self.WCC_path_box.isReadOnly())
         self.ksk_WCC_btn.setEnabled(not self.ksk_WCC_btn.isEnabled())
 
     def generate_data(self):
         """load KSK's data from a file into an object then pickle it"""
-        Wcc_path=self.WCC_path_box.text()
+        Wcc_path = self.WCC_path_box.text()
         ksk_path = self.ksk_path_box.text()
-        all_ksk = load_ksk_list(ksk_path,Wcc_path)
-        dump_ksk_object(all_ksk)
-        self.wm = SecondWindow()
-        self.wm.show()
-
+        try:
+            all_ksk = load_ksk_list(ksk_path, Wcc_path)
+        except ValueError as err:
+            QMessageBox.warning(self, "Excel file ", str(err))
+        except:
+            QMessageBox.warning(self, "Excel file ", 'Something wrong')
+        else:
+            dump_ksk_object(all_ksk)
+            self.wm = SecondWindow()
+            self.wm.show()
 
     def createChildGroup(self, name="", image=""):
         groupBox = QGroupBox(name)
@@ -146,6 +148,7 @@ class MainWindow(QWidget):
 
 
 if __name__ == '__main__':
+    appctxt = ApplicationContext()
     app = QApplication(sys.argv)
     clock = MainWindow()
     clock.show()

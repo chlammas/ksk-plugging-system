@@ -28,7 +28,7 @@ def generate_ksk_images(ksk_name: str, ksk_data: list):
 def search_for_ksk(query: str = "") -> list:
     """Return a ksk list that match the search query"""
     ksk_names = []
-    ksk_list=load_ksk_object()
+    ksk_list = load_ksk_object()
     for ksk_name in ksk_list.keys():
         if ksk_name.upper().startswith(query.upper()):
             ksk_names.append(f'{ksk_name}')
@@ -37,13 +37,9 @@ def search_for_ksk(query: str = "") -> list:
 
 def get_ksk(ksk_name):
     """return a list of images that belong to a ksk"""
-    ksk_list=load_ksk_object()
+    ksk_list = load_ksk_object()
     if ksk_name in ksk_list:
-        generate_ksk_images(ksk_name,ksk_list[ksk_name])
-
-
-    
-
+        generate_ksk_images(ksk_name, ksk_list[ksk_name])
 
 
 def create_ksk_directory(parent_dir: str, ksk_name: str):
@@ -65,7 +61,7 @@ def dump_ksk_object(ksk_list: dict):
         pickle.dump(ksk_list, ksk_file)
 
 
-def load_ksk_object()-> dict:
+def load_ksk_object() -> dict:
     if not os.path.exists('data/ksk.back'):
         return {}
     with open('data/ksk.back', 'rb') as ksk_file:
