@@ -10,13 +10,13 @@ def load_KSK_list(KSK_file_path: str, wirelist_file_path: str):
     KSK_wb = load_workbook(KSK_file_path)
     KSK_sheet = KSK_wb.active
     
-    
     all_KSK = {}
     max_column = KSK_sheet.max_column - 1
     while(max_column > 0):
         data = []
         derivatives = []
-        KSK_name = KSK_sheet[1][max_column].value
+        KSK_name = KSK_sheet[1][max_column].value.strip()
+        KSK_date = KSK_sheet[2][max_column].value
         for row in KSK_sheet:
             if (row[0].value):
                 if row[max_column].value == 'X':
@@ -28,13 +28,14 @@ def load_KSK_list(KSK_file_path: str, wirelist_file_path: str):
             if derivative in derivatives:
                 data.append((connector, empty_cavity))
         if data:
-            all_KSK[KSK_name] = data
+            all_KSK[KSK_name] = KSK_date, data
         max_column -= 1
 
     if not all_KSK:
         raise ValueError("Files fromat is invalid!")
 
     remove_directory_content('output')
+
     return all_KSK
     
     

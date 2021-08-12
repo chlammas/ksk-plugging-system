@@ -1,10 +1,10 @@
+from datetime import datetime
 import os
 import sys
 from typing import Text
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from handlers.excel_handler import load_KSK_list
 from handlers.ouput_handler import get_KSK, search_for_KSK
 
 
@@ -35,8 +35,12 @@ class SecondWindow(QWidget):
         self.search_box.setGeometry(10, 30, 240, 30)
         self.search_box.textChanged.connect(self.fill_KSK_list_widget)
 
+        self.cb = QComboBox(output_gb)
+        self.cb.setGeometry(10, 70, 240, 30)
+        self.cb.currentTextChanged.connect(self.filter_KSK_list_widget)
+
         self.list_widget = QListWidget(output_gb)
-        self.list_widget.setGeometry(10, 70, 240, 600)
+        self.list_widget.setGeometry(10, 110, 240, 600)
         self.list_widget.setStyleSheet(
             "background-color :#fbeec1;color:#1b3320")
         self.list_widget.itemClicked.connect(self.show_KSK_images)
@@ -52,7 +56,7 @@ class SecondWindow(QWidget):
             back_btn.setGeometry(30, 630, 200, 40)
             back_btn.setStyleSheet("background-color :#bd986b;color:black")
             back_btn.setText('Back')
-            self.list_widget.setGeometry(10, 70, 240, 550)
+            self.list_widget.setGeometry(10, 110, 240, 510)
             back_btn.clicked.connect(self.show_admin_window)
 
         self.setLayout(self.main_grid)
@@ -75,9 +79,11 @@ class SecondWindow(QWidget):
         else:
             KSK_name = self.list_widget.selectedItems()[0].text()
 
-        # self.list_widget.selectedItems()[0].setBackground(QColor(244,224,194))
         get_KSK(KSK_name)
-        connectors_gb = self.createParentGroup("Connectors")
+
+        connectors_gb = self.createParentGroup(f"Connectors of {KSK_name}")
+        connectors_gb.setStyleSheet("color: blue; font-size: 20px")
+
         self.main_grid.addWidget(connectors_gb, 0, 2, 9, 4)
 
         next_btn = QPushButton(connectors_gb)
@@ -85,15 +91,12 @@ class SecondWindow(QWidget):
         MyIcon2 = QPixmap('input/images/next.png')
         next_btn.setIcon(QIcon(MyIcon2))
         next_btn.setIconSize(QSize(100, 40))
-        # next_btn.setText("next")
         next_btn.setToolTip('next')
         next_btn.setStyleSheet("background-color :#fbeec1;color:#fbeec1")
         next_btn.clicked.connect(lambda: self.show_KSK_images(
             self.list_widget.selectedIndexes()[0].row() + 1))
-        # generate_btn.clicked.connect(next_KSK(KSK_name))
-        # generate_btn.setStyleSheet("background-color :#1b3320;color:#fbeec1")
+
         previous_btn = QPushButton(connectors_gb)
-        # previous_btn.setText("previous")
         previous_btn.setGeometry(20, 290, 70, 40)
         MyIcon = QPixmap('input/images/previous.png')
         previous_btn.setIcon(QIcon(MyIcon))
@@ -111,9 +114,24 @@ class SecondWindow(QWidget):
         """Fill up the KSK list widget by KSK names"""
         self.list_widget.clear()
         search_query = self.search_box.text()
-        KSK_names = search_for_KSK(search_query)
-        for KSK_name in KSK_names:
-            QListWidgetItem(KSK_name, self.list_widget)
+        KSK_names, dates = search_for_KSK(search_query)
+        if self.cb.count() == 0:
+            self.cb.addItem('Filter by date')
+            self.cb.addItems({date for date in dates.keys()})
+        else:
+            self.cb.setCurrentIndex(0)
+        self.list_widget.addItems(KSK_names)
+        
+    def filter_KSK_list_widget(self):
+        KSK_names, dates = search_for_KSK()
+
+        if self.cb.currentText() != 'Filter by date':
+            KSK_names = [self.list_widget.item(i).text() for i in range(self.list_widget.count())]
+            KSK_names = dates[self.cb.currentText()]
+            self.search_box.setText("")
+
+        self.list_widget.clear()
+        self.list_widget.addItems(KSK_names)
 
     def createParentGroup(self, name=""):
         groupBox = QGroupBox(name)
