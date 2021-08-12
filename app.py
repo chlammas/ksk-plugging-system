@@ -4,7 +4,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from handlers.excel_handler import load_KSK_list
-from handlers.ouput_handler import get_KSK, search_for_KSK, dump_KSK_object
+from handlers.ouput_handler import dump_KSK_object
 from second_app import SecondWindow
 
 
@@ -107,10 +107,10 @@ class MainWindow(QWidget):
 
     def generate_data(self):
         """load KSK's data from a file into an object then pickle it"""
-        Wcc_path = self.WCC_path_box.text()
+        WCC_path = self.WCC_path_box.text()
         KSK_path = self.KSK_path_box.text()
         try:
-            all_KSK = load_KSK_list(KSK_path, Wcc_path)
+            all_KSK = load_KSK_list(KSK_path, WCC_path)
         except ValueError as err:
             QMessageBox.critical(self, "Excel file ", str(err))
         except:
