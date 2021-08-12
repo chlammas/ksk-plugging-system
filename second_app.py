@@ -14,7 +14,7 @@ class SecondWindow(QWidget):
 
         self.main_grid = QGridLayout()
 
-        output_gb = self.createChildGroup("KSK LIST")
+        output_gb = self.createChildGroup("KSK List")
 
         self.main_grid.addWidget(output_gb, 0, 0, 9, 1)
 
@@ -49,7 +49,7 @@ class SecondWindow(QWidget):
 
         self.setWindowTitle("Plugging System")
         self.setStyleSheet(
-            "background-color:#659ebc ;color:#fbeec1;font-size:18px")
+            "background-color:#659ebc ;color:#0a4e2f;font-size:18px")
 
         if from_admin:
             back_btn = QPushButton(output_gb)
@@ -81,8 +81,8 @@ class SecondWindow(QWidget):
 
         get_KSK(KSK_name)
 
-        connectors_gb = self.createParentGroup(f"Connectors of {KSK_name}")
-        connectors_gb.setStyleSheet("color: blue; font-size: 20px")
+        connectors_gb = self.createParentGroup(f"Connectors Of {KSK_name}")
+        connectors_gb.setStyleSheet("font-size: 22px")
 
         self.main_grid.addWidget(connectors_gb, 0, 2, 9, 4)
 
